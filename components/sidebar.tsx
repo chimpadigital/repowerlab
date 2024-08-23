@@ -5,6 +5,7 @@ import { subtitle } from './primitives'
 import { AppLogo } from './icons'
 import { siteConfig } from '@/config/site'
 import Link from 'next/link'
+import { deleteTokenCookie } from '@/utils/cookieHandler'
 
 export default function Sidebar() {
     const [open, setOpen] = useState(true)
@@ -29,7 +30,7 @@ export default function Sidebar() {
             </div>
             <div>
                 <div>
-                    <Link className={subtitle()} href="/auth/login">Log out</Link>
+                    <Link onClick={() => { deleteTokenCookie() }} className={subtitle()} href="/auth/login">Log out</Link>
                 </div>
                 <div className="w-full flex justify-end">
                     <ThemeSwitch />

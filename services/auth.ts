@@ -1,5 +1,9 @@
+import { setTokenCookie } from "@/utils/cookieHandler";
+
 export interface LoginResponse {
-    token: string;
+    data: { 
+        access_token: string; 
+    }
 }
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
@@ -17,7 +21,9 @@ export const login = async (email: string, password: string): Promise<LoginRespo
         }
 
         const data: LoginResponse = await response.json();
-        localStorage.setItem('token', data.token);
+
+        
+        console.log(data)
         return data;
     } catch (error) {
         throw error;
