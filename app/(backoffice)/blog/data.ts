@@ -11,21 +11,22 @@ const blogs:BlogI[] = [
   {
     id: 1,
     title: "Lorem ipsum",
-    status: "draft",
+    is_published: true,
     created_at: "---",
     published_at: "07/08/2024"
   },
   {
     id: 2,
     title: "Lorem ipsum 2",
-    status: "paused",
+    is_published: true,
     created_at: "---",
     published_at: "04/04/2024"
   },
   {
     id: 3,
     title: "Lorem ipsum 3",
-    status: "published",
+    is_published: true,
+    
     created_at: "---",
     published_at: "04/04/2024"
   },

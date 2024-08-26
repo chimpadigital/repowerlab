@@ -3,7 +3,6 @@ export interface BlogI {
     title: string
     created_at: string
     published_at: string
-    status: BlogStatusT
+    is_published: boolean
+    lang?: "esp" | "eng"
 }
-
-export type BlogStatusT = "draft" | "published" | "paused"

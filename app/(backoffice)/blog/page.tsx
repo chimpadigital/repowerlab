@@ -1,12 +1,13 @@
 "use client"
 import { title } from "@/components/primitives";
 import React from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, ChipProps, getKeyValue, Button } from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, ChipProps, getKeyValue, Button, Spinner } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { columns, blogs } from "./data";
 import { PlusIcon, SearchIcon } from "@/components/icons";
 import { BlogI } from "@/models/blog";
 import Link from "next/link";
+import { useGetBlogEntries } from "@/services/blog/blog";
 const statusColorMap: Record<string, ChipProps["color"]> = {
   published: "success",
   paused: "danger",
@@ -33,8 +34,8 @@ export default function BlogPage() {
         );
       case "status":
         return (
-          <Chip className="capitalize" color={statusColorMap[blog.status]} size="sm" variant="flat">
-            {cellValue}
+          <Chip className="capitalize" color={statusColorMap[blog.is_published ? "published" : "draft"]} size="sm" variant="flat">
+            {blog.is_published ? "Published" : "Draft"}
           </Chip>
         );
       case "actions":
@@ -58,6 +59,10 @@ export default function BlogPage() {
         return cellValue;
     }
   }, []);
+
+  const { data, error, isLoading } = useGetBlogEntries("/entries")
+
+  console.log(data)
 
   return (
     <>
@@ -106,7 +111,8 @@ export default function BlogPage() {
           </Button>
         </Link>
       </div>
-      <Table aria-label="Example table with custom cells">
+
+      <Table aria-label="Table blog entries data backend">
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
@@ -114,9 +120,11 @@ export default function BlogPage() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={blogs}>
+        <TableBody emptyContent={"No rows to display."} items={data.data} 
+        isLoading={isLoading}
+        loadingContent={<Spinner label="Loading..." />}>
           {(item) => (
-            <TableRow key={item.id}>
+            <TableRow  key={item?.id}>
               {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
             </TableRow>
           )}

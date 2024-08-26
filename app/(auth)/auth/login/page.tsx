@@ -24,10 +24,7 @@ export default function Login() {
         try {
             const userData = await login(email, password);
             setLoading(false)
-            // Handle successful login, e.g., redirect or set user context
             if (userData && userData.data && userData.data.access_token) {
-                // Manejo de inicio de sesión exitoso
-                console.log('User data:', userData.data.access_token);
                 setTokenCookie(userData.data.access_token);
                 router.push("/");
             } 
