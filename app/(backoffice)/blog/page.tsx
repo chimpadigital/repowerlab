@@ -1,11 +1,14 @@
 "use client"
 import { title } from "@/components/primitives";
-import React from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, ChipProps, getKeyValue, Button, Spinner } from "@nextui-org/react";
+import React, { useState } from "react";
+import ModalDelete from "@/components/modals/ModalDelete";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, ChipProps, Button, Spinner, useDisclosure } from "@nextui-org/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, cn } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { columns, blogs } from "./data";
-import { PlusIcon, SearchIcon } from "@/components/icons";
+import { DeleteIcon, EditIcon, PlusIcon, SearchIcon } from "@/components/icons";
 import { BlogI } from "@/models/blog";
+import { MenuIcon } from "@/components/icons";
 import Link from "next/link";
 import { useGetBlogEntries } from "@/services/blog/blog";
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -15,7 +18,12 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 };
 
 
+
 export default function BlogPage() {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [deleteUrl, setDeleteUrl] = useState<string>("")
+  const [titleDelete, setTitleDelete] = useState<string>("")
+
   const renderCell = React.useCallback((blog: BlogI, columnKey: React.Key) => {
     const cellValue = blog[columnKey as keyof BlogI];
 
@@ -39,20 +47,41 @@ export default function BlogPage() {
           </Chip>
         );
       case "actions":
+        const deleteFunc = () => {
+          onOpen()
+          setDeleteUrl(`/entries/${blog.id}`)
+          setTitleDelete(blog.title)
+        }
         return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Details">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-              </span>
-            </Tooltip>
-            <Tooltip content="Edit user">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-              </span>
-            </Tooltip>
-            <Tooltip color="danger" content="Delete user">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
-              </span>
-            </Tooltip>
+          <div className="relative flex items-center justify-center  gap-2">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button className="bg-transparent"
+                >
+                  <MenuIcon />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu variant="faded" aria-label="Dropdown menu with icons">
+
+                <DropdownItem
+                  key="edit"
+                  startContent={<EditIcon />}
+                >
+                  <Link href={'/blog/edit/' + blog.id}>
+                    Edit blog
+                  </Link>
+                </DropdownItem>
+                <DropdownItem
+                  key="delete"
+                  className="text-danger"
+                  color="danger"
+                  onClick={() => { deleteFunc() }}
+                  startContent={<DeleteIcon />}
+                >
+                  Delete blog
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </div>
         );
       default:
@@ -120,16 +149,17 @@ export default function BlogPage() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No rows to display."} items={data.data} 
-        isLoading={isLoading}
-        loadingContent={<Spinner label="Loading..." />}>
+        <TableBody emptyContent={"No rows to display."} items={data.data}
+          isLoading={isLoading}
+          loadingContent={<Spinner label="Loading..." />}>
           {(item) => (
-            <TableRow  key={item?.id}>
+            <TableRow key={item?.id}>
               {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
             </TableRow>
           )}
         </TableBody>
       </Table>
+      <ModalDelete isOpen={isOpen} title={titleDelete} onOpenChange={onOpenChange} onOpen={onOpen} url={deleteUrl} />
     </>
   );
 

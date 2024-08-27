@@ -13,6 +13,7 @@
 		"@ckeditor/ckeditor5-build-classic": "^43.0.0",
 		"@ckeditor/ckeditor5-image": "^43.0.0",
 		"@ckeditor/ckeditor5-react": "^9.0.0",
+		"@ckeditor/ckeditor5-upload": "^43.0.0",
 		"@nextui-org/button": "2.0.37",
 		"@nextui-org/code": "2.0.32",
 		"@nextui-org/input": "2.2.4",

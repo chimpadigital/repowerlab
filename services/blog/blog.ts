@@ -56,14 +56,18 @@ export const usePostEntry = (url: string): PostEntryHook => {
     const token = getCookie("token")
     const formData = new FormData();
     const myHeaders = new Headers()
+    
     formData.append('content', entryData.content);
     if (entryData.author) formData.append('author', entryData.author);
     formData.append('title', entryData.title);
-    formData.append('category', entryData.category);
+    // formData.append('category', entryData.category);
     formData.append('lang', entryData.lang || 'esp'); // Default value is 'esp'
-    formData.append('is_published', String(entryData.is_published || false));
+    formData.append('is_published', String(entryData.is_published || 0));
+
+
     myHeaders.append("Authorization",`Bearer ${token}`)
-    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+    myHeaders.append("Accept", "application/json")
+   
     if (entryData.images) {
       entryData.images.forEach((image, index) => {
         formData.append(`images[${index}]`, image);

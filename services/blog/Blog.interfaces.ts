@@ -4,7 +4,7 @@ export interface EntryData {
     title: string;
     category: string;
     lang?: 'esp' | 'eng';
-    is_published?: boolean;
+    is_published?: number;
     images?: File[];
 }
 

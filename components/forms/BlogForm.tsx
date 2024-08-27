@@ -26,13 +26,13 @@ export default function BlogForm({
   title: string;
   category: string;
   lang: string;
-  isPublished: boolean;
+  isPublished: number;
   setContent: (content: string) => void;
   setAuthor: (author: string) => void;
   setTitle: (title: string) => void;
   setCategory: (category: string) => void;
   setLang: (lang: any) => void;
-  setIsPublished: (isPublished: boolean) => void;
+  setIsPublished: (isPublished: number) => void;
 }) {
 
 
@@ -67,7 +67,7 @@ export default function BlogForm({
               label="Language"
               variant="bordered"
               labelPlacement="outside"
-              value={lang}
+              defaultSelectedKeys={[lang]}
               onChange={(value) => setLang(value.target.value)}
             >
               <SelectItem key="esp" value="esp">Spanish</SelectItem>

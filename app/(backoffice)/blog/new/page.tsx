@@ -2,19 +2,19 @@
 import BlogForm from '@/components/forms/BlogForm'
 import { LoginIcon } from '@/components/icons';
 import { subtitle, title } from '@/components/primitives'
-import { usePostEntry } from '@/services/blog/blog';
+import { useGetBlogEntries, usePostEntry } from '@/services/blog/blog';
 import { Button } from '@nextui-org/button';
 import React, { useState } from 'react'
 
 export default function NewBlog() {
-  const { data, error, isLoading, postEntry } = usePostEntry("/entries");
+  const { data:data2, error:error2, isLoading, postEntry } = usePostEntry("/entries");
 
   const [content, setContent] = useState('<p>Contenido html</p>');
   const [author, setAuthor] = useState('');
   const [title2, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [lang, setLang] = useState<"esp" | "eng">('esp');
-  const [isPublished, setIsPublished] = useState(false);
+  const [isPublished, setIsPublished] = useState(0);
 
   const handleSubmit = () => {
     postEntry({
@@ -48,10 +48,15 @@ export default function NewBlog() {
           setIsPublished={setIsPublished} />
         <div className="card shadow w-[350px] rounded h-fit p-6">
           <h5 className={subtitle()}>Actions</h5>
+          <div className="flex flex-col gap-4 mt-6">
 
-          <Button color="primary" onClick={handleSubmit} type='submit' className='p-4' isLoading={isLoading} disabled={isLoading} endContent={<LoginIcon />}>
-            Publish
-          </Button>
+            <Button color="primary" onClick={handleSubmit} type='submit' className='p-4' isLoading={isLoading} disabled={isLoading} endContent={<LoginIcon />}>
+              Publish
+            </Button>
+            <Button color="warning" onClick={handleSubmit} type='submit' className='p-4 ' isLoading={isLoading} disabled={isLoading} endContent={<LoginIcon />}>
+              Draft
+            </Button>
+          </div>
         </div>
       </div>
     </>
