@@ -2,16 +2,18 @@
 import BlogForm from '@/components/forms/BlogForm'
 import { LoginIcon } from '@/components/icons';
 import { subtitle, title } from '@/components/primitives'
-import { useGetBlogEntries, usePostEntry } from '@/services/blog/blog';
+import { useGetBlogEntries, usePostEntry, usePutEntry } from '@/services/blog/blog';
+import { useDelete } from '@/services/delete';
 import { Button } from '@nextui-org/button';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 
 export default function EditBlog({ params }: { params: { id: number } }) {
-  const { data: data2, error: error2, isLoading, postEntry } = usePostEntry("/entries");
-
+  const { data: data2, error: error2, isLoading, putEntry } = usePutEntry(`/entries/${params.id}`);
+  const router = useRouter()
   const { data, error, isLoading: isLoadingData } = useGetBlogEntries(`/entries/${params.id}`)
-
+  const { data: dataD, error: errorD, isLoading: isLoadingD, isDeleted, deleteEntry } = useDelete(`/entries/${params.id}`)
   const [content, setContent] = useState('<p>Contenido html</p>');
   const [author, setAuthor] = useState('');
   const [title2, setTitle] = useState('');
@@ -20,7 +22,6 @@ export default function EditBlog({ params }: { params: { id: number } }) {
   const [isPublished, setIsPublished] = useState(0);
 
   useEffect(() => {
-    console.log(data)
     if (data.data) {
       const blog = data.data as any
       setContent(blog.content)
@@ -30,8 +31,10 @@ export default function EditBlog({ params }: { params: { id: number } }) {
     }
   }, [data])
 
+ 
+
   const handleSubmit = () => {
-    postEntry({
+    putEntry({
       content,
       author,
       title: title2,
@@ -40,6 +43,14 @@ export default function EditBlog({ params }: { params: { id: number } }) {
       is_published: isPublished,
     });
   };
+  const handleDelete = () => {
+    deleteEntry()
+  }
+  useEffect(() => {
+    if(isDeleted){
+      router.push('/blog')
+    }
+  }, [isDeleted])
   return (
     <>
       <div className="w-full flex pb-6">
@@ -63,11 +74,11 @@ export default function EditBlog({ params }: { params: { id: number } }) {
           <h5 className={subtitle()}>Actions</h5>
           <div className="flex flex-col gap-4 mt-6">
 
-            <Button color="primary" onClick={handleSubmit} type='submit' className='p-4' isLoading={isLoading} disabled={isLoading} endContent={<LoginIcon />}>
+            <Button color="primary" onClick={handleSubmit} type='submit' className='p-4' isLoading={isLoading} endContent={<LoginIcon />}>
               Publish
             </Button>
-            <Button color="warning" onClick={handleSubmit} type='submit' className='p-4 ' isLoading={isLoading} disabled={isLoading} endContent={<LoginIcon />}>
-              Draft
+            <Button color="warning" onClick={() => { handleDelete() }} type='submit' className='p-4 ' isLoading={isLoadingD} endContent={<LoginIcon />}>
+              Delete
             </Button>
           </div>
         </div>

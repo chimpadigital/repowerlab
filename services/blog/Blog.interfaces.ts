@@ -14,3 +14,9 @@ export interface PostEntryHook {
     isLoading: boolean;
     postEntry: (entryData: EntryData) => Promise<void>;
 }
+export interface PutEntryHook {
+    data: any;
+    error: string | null;
+    isLoading: boolean;
+    putEntry: (entryData: EntryData) => Promise<void>;
+}

@@ -4,10 +4,10 @@ import { LoginIcon } from '@/components/icons';
 import { subtitle, title } from '@/components/primitives'
 import { useGetBlogEntries, usePostEntry } from '@/services/blog/blog';
 import { Button } from '@nextui-org/button';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 export default function NewBlog() {
-  const { data:data2, error:error2, isLoading, postEntry } = usePostEntry("/entries");
+  const { data: data2, error: error2, isLoading, postEntry } = usePostEntry("/entries");
 
   const [content, setContent] = useState('<p>Contenido html</p>');
   const [author, setAuthor] = useState('');
@@ -16,16 +16,19 @@ export default function NewBlog() {
   const [lang, setLang] = useState<"esp" | "eng">('esp');
   const [isPublished, setIsPublished] = useState(0);
 
-  const handleSubmit = () => {
+  const handleSubmit = (publish?: boolean) => {
     postEntry({
       content,
       author,
       title: title2,
       category,
       lang,
-      is_published: isPublished,
+      is_published: publish ? 1 : isPublished,
     });
   };
+  useEffect(() => { 
+    console.log(data2)
+  }, [data2])
 
   return (
     <>
@@ -50,10 +53,10 @@ export default function NewBlog() {
           <h5 className={subtitle()}>Actions</h5>
           <div className="flex flex-col gap-4 mt-6">
 
-            <Button color="primary" onClick={handleSubmit} type='submit' className='p-4' isLoading={isLoading} disabled={isLoading} endContent={<LoginIcon />}>
+            <Button color="primary" onClick={() => { handleSubmit(true) }} type='submit' className='p-4' isLoading={isLoading} disabled={isLoading} endContent={<LoginIcon />}>
               Publish
             </Button>
-            <Button color="warning" onClick={handleSubmit} type='submit' className='p-4 ' isLoading={isLoading} disabled={isLoading} endContent={<LoginIcon />}>
+            <Button color="warning" onClick={() => { handleSubmit() }} type='submit' className='p-4 ' isLoading={isLoading} disabled={isLoading} endContent={<LoginIcon />}>
               Draft
             </Button>
           </div>
