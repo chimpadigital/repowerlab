@@ -11,6 +11,7 @@ import { BlogI } from "@/models/blog";
 import { MenuIcon } from "@/components/icons";
 import Link from "next/link";
 import { useGetBlogEntries } from "@/services/blog/blog";
+import { useRouter } from "next/navigation";
 const statusColorMap: Record<string, ChipProps["color"]> = {
   published: "success",
   paused: "danger",
@@ -21,6 +22,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 
 export default function BlogPage() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const router = useRouter()
   const [deleteUrl, setDeleteUrl] = useState<string>("")
   const [titleDelete, setTitleDelete] = useState<string>("")
 
@@ -159,7 +161,7 @@ export default function BlogPage() {
           )}
         </TableBody>
       </Table>
-      <ModalDelete isOpen={isOpen} title={titleDelete} onOpenChange={onOpenChange} onOpen={onOpen} url={deleteUrl} />
+      <ModalDelete isOpen={isOpen} title={titleDelete} afterDelete={()=>{router.push("/blog")}} onOpenChange={onOpenChange} onOpen={onOpen} url={deleteUrl} />
     </>
   );
 

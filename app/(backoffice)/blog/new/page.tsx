@@ -53,7 +53,7 @@ export default function NewBlog() {
           <h5 className={subtitle()}>Actions</h5>
           <div className="flex flex-col gap-4 mt-6">
 
-            <Button color="primary" onClick={() => { handleSubmit(true) }} type='submit' className='p-4' isLoading={isLoading} disabled={isLoading} endContent={<LoginIcon />}>
+            <Button color="success" onClick={() => { handleSubmit(true) }} type='submit' className='p-4' isLoading={isLoading} disabled={isLoading} endContent={<LoginIcon />}>
               Publish
             </Button>
             <Button color="warning" onClick={() => { handleSubmit() }} type='submit' className='p-4 ' isLoading={isLoading} disabled={isLoading} endContent={<LoginIcon />}>

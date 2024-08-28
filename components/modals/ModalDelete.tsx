@@ -1,23 +1,35 @@
-import React from 'react'
+"use client"
+import React, { useEffect, useState } from 'react'
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 import { useDelete } from '@/services/delete';
+import { useRouter } from 'next/navigation';
 
 interface DeleteI {
     isOpen: any
     onOpen: any
     onOpenChange: any
+    afterDelete: any
     url: string
     title: string
 }
 
-export default function ModalDelete({ isOpen, onOpen, onOpenChange, url, title }: DeleteI) {
+export default function ModalDelete({ isOpen, onOpen, onOpenChange, url, title, afterDelete }: DeleteI) {
 
     const { data, error, isLoading, isDeleted, deleteEntry } = useDelete(url)
-
+    const router = useRouter()
+    const [handleClose, setHandleClose] = useState<any>(null)
     const handleDelete = (onClose: any) => {
         deleteEntry()
-        if (isDeleted) onClose()
+        setHandleClose(onClose)
     }
+
+
+    useEffect(() => {
+        if (isDeleted) {
+            afterDelete()
+            if(handleClose) handleClose()
+        }
+    }, [isDeleted])
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
