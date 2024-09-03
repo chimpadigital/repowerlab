@@ -21,6 +21,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 
 
 export default function BlogPage() {
+  const { data, error, isLoading, refetch } = useGetBlogEntries("/entries")
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const router = useRouter()
   const [deleteUrl, setDeleteUrl] = useState<string>("")
@@ -89,11 +90,9 @@ export default function BlogPage() {
       default:
         return cellValue;
     }
-  }, []);
+  }, [data]);
 
-  const { data, error, isLoading } = useGetBlogEntries("/entries")
-
-  console.log(data)
+  
 
   return (
     <>
@@ -161,7 +160,7 @@ export default function BlogPage() {
           )}
         </TableBody>
       </Table>
-      <ModalDelete isOpen={isOpen} title={titleDelete} afterDelete={()=>{router.push("/blog")}} onOpenChange={onOpenChange} onOpen={onOpen} url={deleteUrl} />
+      <ModalDelete isOpen={isOpen} title={titleDelete} afterDelete={()=>{refetch()}} onOpenChange={onOpenChange} onOpen={onOpen} url={deleteUrl} />
     </>
   );
 

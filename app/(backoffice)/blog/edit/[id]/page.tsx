@@ -8,6 +8,7 @@ import { useDisclosure } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import ModalDelete from '@/components/modals/ModalDelete';
+import { toast } from 'react-toastify';
 
 export default function EditBlog({ params }: { params: { id: number } }) {
   const { data: data2, error: error2, isLoading, putEntry } = usePutEntry(`/entries/${params.id}`);
@@ -34,7 +35,7 @@ export default function EditBlog({ params }: { params: { id: number } }) {
 
 
   const handleSubmit = () => {
-    putEntry({
+    const promise = putEntry({
       content,
       author,
       title: title2,
@@ -42,8 +43,16 @@ export default function EditBlog({ params }: { params: { id: number } }) {
       lang,
       is_published: 1,
     });
+    toast.promise(
+      promise,
+      {
+        pending: 'Edditing Post',
+        success: 'Post eddited succesfully',
+        error: 'Something went wrong'
+      }
+    )
   };
-  
+
 
   return (
     <>
@@ -77,7 +86,7 @@ export default function EditBlog({ params }: { params: { id: number } }) {
           </div>
         </div>
       </div>
-      <ModalDelete afterDelete={()=>{router.push("/blog")}} title={(data.data as any)?.title} isOpen={isOpen} url={`/entries/${params.id}`} onOpen={onOpen} onOpenChange={onOpenChange}/>
+      <ModalDelete afterDelete={() => { router.push("/blog") }} title={(data.data as any)?.title} isOpen={isOpen} url={`/entries/${params.id}`} onOpen={onOpen} onOpenChange={onOpenChange} />
     </>
   )
 }
