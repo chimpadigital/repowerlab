@@ -47,7 +47,6 @@ export default function Login() {
                 </div>
                 <div className="py-8">
                     <form onSubmit={handleSubmit}>
-
                         <Input onChange={(e) => setEmail(e.target.value)} value={email} type="email" variant={'bordered'} label="Email" />
                         <Input
                             onChange={(e) => setPassword(e.target.value)}
