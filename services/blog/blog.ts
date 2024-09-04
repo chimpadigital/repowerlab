@@ -8,17 +8,45 @@ interface Response {
   data: any[]
 }
 
-export const useGetBlogEntries = (url: string) => {
+interface Response {
+  data: any[];
+}
+
+interface FetchParams {
+  sort?: string; // "category,-title"
+  filter?: { [key: string]: string }; // { title: "Casa", category: "Compradores", lang: "esp" }
+}
+
+export const useGetBlogEntries = (url: string, initialParams?: FetchParams) => {
   const [data, setData] = useState<Response>({ data: [] });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [params, setParams] = useState<FetchParams | undefined>(initialParams);
 
-  const fetchData = async () => {
+  const buildUrlWithParams = (url: string, params?: FetchParams) => {
+    const urlObj = new URL(process.env.NEXT_PUBLIC_API_URL + url);
+
+    if (params?.sort) {
+      urlObj.searchParams.append('sort', params.sort);
+    }
+
+    if (params?.filter) {
+      Object.keys(params.filter).forEach((key) => {
+        if(params.filter) urlObj.searchParams.append(`filter[${key}]`, params.filter[key]);
+      });
+    }
+
+    return urlObj.toString();
+  };
+
+  const fetchData = async (overrideParams?: FetchParams) => {
     const token = getCookie("token");
     setIsLoading(true);
 
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + url, {
+      const finalParams = overrideParams ? { ...params, ...overrideParams } : params;
+      const fullUrl = buildUrlWithParams(url, finalParams);
+      const response = await fetch(fullUrl, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -41,9 +69,14 @@ export const useGetBlogEntries = (url: string) => {
 
   useEffect(() => {
     fetchData();
-  }, [url]);
+  }, [url, params]);
 
-  return { data, error, isLoading, refetch: fetchData };
+  const refetch = (newParams?: FetchParams) => {
+    setParams((prevParams) => ({ ...prevParams, ...newParams }));
+    fetchData(newParams);
+  };
+
+  return { data, error, isLoading, refetch };
 };
 
 

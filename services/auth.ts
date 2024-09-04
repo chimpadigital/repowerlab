@@ -23,7 +23,6 @@ export const login = async (email: string, password: string): Promise<LoginRespo
         const data: LoginResponse = await response.json();
 
         
-        console.log(data)
         return data;
     } catch (error) {
         throw error;

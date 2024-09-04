@@ -36,9 +36,7 @@ export default function NewBlog() {
       }
     )
   };
-  useEffect(() => {
-    console.log(data2)
-  }, [data2])
+
 
   return (
     <>

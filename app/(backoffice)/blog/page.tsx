@@ -1,17 +1,17 @@
 "use client"
 import { title } from "@/components/primitives";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ModalDelete from "@/components/modals/ModalDelete";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, ChipProps, Button, Spinner, useDisclosure } from "@nextui-org/react";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, cn } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
-import { columns, blogs } from "./data";
 import { DeleteIcon, EditIcon, PlusIcon, SearchIcon } from "@/components/icons";
 import { BlogI } from "@/models/blog";
 import { MenuIcon } from "@/components/icons";
 import Link from "next/link";
 import { useGetBlogEntries } from "@/services/blog/blog";
 import { useRouter } from "next/navigation";
+import { useDebouncedSearch } from "@/utils/debounce";
 const statusColorMap: Record<string, ChipProps["color"]> = {
   published: "success",
   paused: "danger",
@@ -26,6 +26,24 @@ export default function BlogPage() {
   const router = useRouter()
   const [deleteUrl, setDeleteUrl] = useState<string>("")
   const [titleDelete, setTitleDelete] = useState<string>("")
+  const [debouncedQuery, setQuery] = useDebouncedSearch('_', 500);
+  const [sortDirection, setSortDirection] = useState<"ascending" | "descending">("ascending");
+  const [sortField, setSortField] = useState<string>("title");
+  const columns = [
+    { name: "TITLE", uid: "title" },
+    { name: "PUBLISH DATE", uid: "published_at" },
+    { name: "STATUS", uid: "status" },
+    { name: "ACTIONS", uid: "actions" },
+  ]
+
+  const handleSortChange = (columnKey: string) => {
+    const newDirection = sortDirection === "ascending" ? "descending" : "ascending";
+    setSortField(columnKey);
+    setSortDirection(newDirection);
+    refetch({
+      sort: `${newDirection === "ascending" ? '' : '-'}${columnKey}`,
+    });
+  };
 
   const renderCell = React.useCallback((blog: BlogI, columnKey: React.Key) => {
     const cellValue = blog[columnKey as keyof BlogI];
@@ -92,7 +110,18 @@ export default function BlogPage() {
     }
   }, [data]);
 
-  
+  const handleSearch = () => {
+    if (debouncedQuery == "") refetch()
+    refetch({ filter: { ["title"]: debouncedQuery } })
+    console.log('Searching for:', debouncedQuery);
+  }
+
+
+  useEffect(() => {
+    if (debouncedQuery != "_") {
+      handleSearch();
+    }
+  }, [debouncedQuery]);
 
   return (
     <>
@@ -107,6 +136,7 @@ export default function BlogPage() {
             label="Search"
             isClearable
             radius="lg"
+            onChange={(e) => setQuery(e.target.value)}
             classNames={{
               label: "text-black/50 dark:text-white/90",
               input: [
@@ -142,10 +172,15 @@ export default function BlogPage() {
         </Link>
       </div>
 
-      <Table aria-label="Table blog entries data backend">
+      <Table
+        sortDescriptor={{ column: sortField, direction: sortDirection }}
+
+        onSortChange={(e) => {
+          if(e.column) handleSortChange((e.column as string))
+        }} aria-label="Table blog entries data backend">
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
+            <TableColumn allowsSorting key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
               {column.name}
             </TableColumn>
           )}
@@ -160,7 +195,7 @@ export default function BlogPage() {
           )}
         </TableBody>
       </Table>
-      <ModalDelete isOpen={isOpen} title={titleDelete} afterDelete={()=>{refetch()}} onOpenChange={onOpenChange} onOpen={onOpen} url={deleteUrl} />
+      <ModalDelete isOpen={isOpen} title={titleDelete} afterDelete={() => { refetch() }} onOpenChange={onOpenChange} onOpen={onOpen} url={deleteUrl} />
     </>
   );
 

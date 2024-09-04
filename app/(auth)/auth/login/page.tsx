@@ -43,7 +43,7 @@ export default function Login() {
             <Card className="max-w-[400px] w-full flex justify-center py-2 px-6">
                 <div className="w-full flex justify-center items-center gap-4 flex-col pt-8">
                     <AppLogo />
-                    <h1 className={subtitle() + " !w-fit"}>Login Repowerlab's Admin</h1>
+                    <h1 className={subtitle() + " !w-fit"}>Login Repowerlab{"'"}s Admin</h1>
                 </div>
                 <div className="py-8">
                     <form onSubmit={handleSubmit}>
