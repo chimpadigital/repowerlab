@@ -1,3 +1,5 @@
+
+import { ToastContainer, toast } from 'react-toastify';
 export default function BlogLayout({
   children,
 }: {
@@ -7,6 +9,7 @@ export default function BlogLayout({
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <div className="inline-block w-full text-center justify-center">
         {children}
+        <ToastContainer/>
       </div>
     </section>
   );

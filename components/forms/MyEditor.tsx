@@ -6,13 +6,15 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import '@ckeditor/ckeditor5-build-classic/build/translations/es.js';
 import CustomUploadAdapter from "./custom-upload-adapter";
 
-const MyEditor = ({content, setContent}: any) => {
+const MyEditor = ({ content, setContent }: any) => {
   const editorConfiguration = {
     plugins: [
       ...ClassicEditor.builtinPlugins,
       CustomUploadAdapter // Agrega el adaptador de carga personalizado
     ],
-   
+    mediaEmbed: {
+      previewsInData: true
+    },
     language: 'es', // Cambia el idioma del editor si es necesario,
     ckfinder: {
       // Solo si quieres permitir la carga a través de CKFinder en el editor

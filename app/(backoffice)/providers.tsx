@@ -18,7 +18,6 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   React.useEffect(() => {
     const token = getCookie("token");
     if (!token || token == undefined) {
-      console.log(token)
       router.push("/auth/login");
     }
   }, [router]);
