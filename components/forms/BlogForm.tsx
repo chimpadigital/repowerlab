@@ -50,6 +50,7 @@ export default function BlogForm({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
+     
         <div className="grid grid-cols-5 gap-4 pt-4">
           <div className="lg:col-span-2 col-span-5">
             <Input
